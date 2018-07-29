@@ -1,7 +1,6 @@
 <?php
 // Полиморфизм - возможность каждого объекта при одинаковых вводных методах иметь различную реализацию.
-// У родителя может быть задан метод вывода определенных значений, но у каждого реализуемого объекта конечный результат
-// или функционал может быть совершенно разным.
+// У родителя может быть задан метод вывода определенных значений, но у каждого реализуемого объекта конечный результат или функционал может быть совершенно разным.
 //
 // Наследование - возможность расширения классов на основе исходных.
 // Свойства и методы сохраняются, могут быть переопределены, а также могут быть расширены за счет определения новых свойств и методов.
@@ -9,14 +8,19 @@
 // Абстрактный класс представляет собой класс, у которого есть хотя бы один нереализованный метод.
 // Интерфейс же может включать в себя исключительно нереализованные методы с пустым телом.
 // Абстрактный класс мы используем тогда, когда есть определенное количество повторяющихся свойств и методов у ряда схожих объектов.
-// Интерфейс необходим тогда, когда надо сообщить объекту, какие методы обязательно должны быть реализованы. 
-// При этом объекты могут значительно отличаться.
+// Интерфейс необходим тогда, когда надо сообщить объекту, какие методы обязательно должны быть реализованы. При этом объекты могут значительно отличаться.
 
 header("Content-Type: text/html; charset=utf-8");
 
 class BaseClass
 {
     public $russianName;
+    public $name;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
 }
 
 interface CarCountry
@@ -47,20 +51,19 @@ interface ProductPriceDiscount
 class Car extends BaseClass implements CarCountry
 {
     public $russianName = 'Автомоблиь';
-    private $make;
     private $model;
     private $dateOfManufacture;
     private $country;
-    public function __construct ($make, $model, $dateOfManufacture, $country)
+    public function __construct ($name, $model, $dateOfManufacture, $country)
     {
-        $this->make = $make;
+        parent::__construct($name);
         $this->model = $model;
         $this->dateOfManufacture = $dateOfManufacture;
         $this->country = $country;
     }
     public function __toString()
     {
-        return $this->russianName .' '. $this->make . ' ' . $this->model . ' выпущен в ' . $this->dateOfManufacture.' году.'.' Страна производитель: '.$this->country.'</br>';
+        return $this->russianName .' '. $this->name . ' ' . $this->model . ' выпущен в ' . $this->dateOfManufacture.' году.'.' Страна производитель: '.$this->country.'</br>';
     }
 
     public function getCountry()
@@ -72,14 +75,13 @@ class Car extends BaseClass implements CarCountry
 class Tv extends BaseClass implements TvType
 {
     public $russianName = 'Телевизор';
-    private $make;
     private $model;
     private $country;
     private $size;
     private $resolution;
-    public function __construct ($make, $model, $country, $size, $resolution)
+    public function __construct ($name, $model, $country, $size, $resolution)
     {
-        $this->make = $make;
+        parent::__construct($name);
         $this->model = $model;
         $this->country = $country;
         $this->size = $size;
@@ -87,7 +89,7 @@ class Tv extends BaseClass implements TvType
     }
     public function __toString()
     {
-        return 'Телевизор '. $this->make . ' ' . $this->model . ' с диагональю ' . $this->size . ' и форматом ' . $this->resolution.'.'.' Страна производитель: '.$this->country.'('.$this->getTvType().')'.'</br>';
+        return 'Телевизор '. $this->name . ' ' . $this->model . ' с диагональю ' . $this->size . ' и форматом ' . $this->resolution.'.'.' Страна производитель: '.$this->country.'('.$this->getTvType().')'.'</br>';
     }
 
     public function getTvType()
@@ -107,8 +109,9 @@ class BallPen extends BaseClass implements BallPenBall
     private $color;
     private $material;
     private $ball;
-    public function __construct ($color, $material, $ball)
+    public function __construct ($name, $color, $material, $ball)
     {
+        parent::__construct($name);
         $this->color = $color;
         $this->material = $material;
         $this->ball = $ball;
@@ -127,12 +130,11 @@ class BallPen extends BaseClass implements BallPenBall
 
 class Duck extends BaseClass implements DuckVoice {
     public $russianName = 'Утка';
-    private $name;
     private $territory;
     private $weight;
     public function __construct ($name, $territory, $weight)
     {
-        $this->name = $name;
+        parent::__construct($name);
         $this->territory = $territory;
         $this->weight = $weight;
     }
@@ -148,18 +150,17 @@ class Duck extends BaseClass implements DuckVoice {
 }
 class Product extends BaseClass implements ProductPriceDiscount {
     public $russianName = 'Товар';
-    private $type;
     private $origin;
     private $price;
-    public function __construct ($type, $origin, $price)
+    public function __construct ($name, $origin, $price)
     {
-        $this->type = $type;
+        parent::__construct($name);
         $this->origin = $origin;
         $this->price = $price;
     }
     public function __toString()
     {
-        return $this->type . ', страна-производитель: ' . $this->origin . ' , стоимость одной шт.: ' . $this->getDiscount() . ' руб.'.'</br>';
+        return $this->name . ', страна-производитель: ' . $this->origin . ' , стоимость одной шт.: ' . $this->getDiscount() . ' руб.'.'</br>';
     }
 
     public function getDiscount()
@@ -175,9 +176,9 @@ $samsung = new Tv ('Samsung', 'UE40M5000AU', 'Корея', '22"', '1080p');
 echo $samsung;
 $sony = new Tv ('Sony', 'X690E Series', 'Япония', '60"', '4k');
 echo $sony;
-$bluepen = new BallPen('синий', 'пластик', 0.3);
+$bluepen = new BallPen('Pen 1', 'синий', 'пластик', 0.3);
 echo $bluepen;
-$redpen = new BallPen('красный', 'металл', 0.7);
+$redpen = new BallPen('Pen 2','красный', 'металл', 0.7);
 echo $redpen;
 $mandarinka = new Duck ('мандаринская', 'Дальний Восток России', '0,6-0,9 кг');
 echo $mandarinka;
